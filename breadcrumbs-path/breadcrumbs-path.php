@@ -32,7 +32,7 @@
 
             if(is_tax()){
                 $tax_id = $object->term_id;
-                $output .= $sep.'<div class="crumb last"><a href="'.get_term_link($object->taxonomy,$object).'">'.$tax_id->name.'</a></div>';
+                $output .= $sep.'<div class="crumb last"><a href="'.get_term_link($object,$object->taxonomy).'">'.$object->name.'</a></div>';
             }
             elseif(is_category()){
                 $cat_id = $object->term_id;
