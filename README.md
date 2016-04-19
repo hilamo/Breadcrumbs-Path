@@ -4,7 +4,9 @@ Create simple breadcrumbs path in your wordpress theme.
 ## How To Use
 
 Add the following Shortcode to your Theme file, outside The Loop where you want the breadcrumbs to appear:
+```php
 [bc_path]
+```
 
 ## Shortcode Options
 ##### 'home_title' (Default: Home)
