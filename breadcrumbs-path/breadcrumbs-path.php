@@ -76,6 +76,7 @@
             }
             elseif(is_single()){
                 $post_type = $object->post_type;
+                $post_types = get_custom_post_types();
                 $archive_title = '';
                 if(is_singular($post_type)){
 					if($post_type == 'post'){
@@ -85,7 +86,7 @@
                             $output .= $sep.'<div class="crumb"><a href="'.get_category_link($cat->term_id).'">'.$cat->name.'</a></div>';
                        }
 					}else{
-					    $archive_title = $post_type;
+					    $archive_title = $post_types[$post_type]->labels->name;
                         $output .= $sep.'<div class="crumb"><a href="'.get_post_type_archive_link($post_type).'">'.$archive_title.'</a></div>';
                     }
                     $output .= $sep.'<div class="crumb last"><a href="'.get_permalink($object->ID).'">'.get_the_title($object->ID).'</a></div>';
