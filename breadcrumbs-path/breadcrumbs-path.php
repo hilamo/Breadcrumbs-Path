@@ -12,7 +12,8 @@
  function breadcrumbs_path($atts) {
      extract( shortcode_atts( array(
 				'home_title'=>'Home',
-                'seperator' => '&#92;'
+                'sep' => '&#92;',
+                'fontawsome' => ''
 			), $atts
 		)
 	);
@@ -21,11 +22,14 @@
     $object = get_queried_object();
 
     $output     = '' ;
-    $sep        = '<span class="crumb_sep">'.$seperator.'</span>' ;
-    $home       = '<div class="crumb home"><a href="'.home_url().'">'.$home_title.'</a></div>';
+    $font_awsome = '<i class="fa fa-'.$fontawsome.'"></i>';
 
-    // $custom_post_types = get_custom_post_types();
-    // $post_taxonomies = get_post_type_taxonomies();
+    if($fontawsome){
+        $sep = '<span class="crumb_sep">'.$font_awsome.'</span>' ;
+    }else{
+        $sep = '<span class="crumb_sep">'.$sep.'</span>' ;
+    }
+    $home       = '<div class="crumb home"><a href="'.home_url().'">'.$home_title.'</a></div>';
 
     $output = '<div id="breadcrumbs_path" class="clearfix">';
         $output .= '<div class="crumbs clearfix">';
@@ -35,11 +39,30 @@
 
             if(is_tax() || is_tag()){
                 $tax_id = $object->term_id;
-                //get_taxonomy_post_type($object);
+                if($object->parent){
+                    $term_parents = get_ancestors($object->term_id, $object->taxonomy);
+                    if(!empty($term_parents)){
+                        $reversed_ancestors = array_reverse($term_parents,false);
+                        foreach ($reversed_ancestors as $parent_id) {
+                            $parent = get_term_by('id',$parent_id,$object->taxonomy);
+                            $output .= $sep.'<div class="crumb"><a href="'.get_term_link($parent, $parent->taxonomy).'">'.$parent->name.'</a></div>';
+                        }
+                    }
+                }
                 $output .= $sep.'<div class="crumb last"><a href="'.get_term_link($object, $object->taxonomy).'">'.$object->name.'</a></div>';
             }
             elseif(is_category()){
                 $cat_id = $object->term_id;
+                if($object->parent){
+                    $term_parents = get_ancestors($object->term_id, $object->taxonomy);
+                    if(!empty($term_parents)){
+                        $reversed_ancestors = array_reverse($term_parents,false);
+                        foreach ($reversed_ancestors as $parent_id) {
+                            $parent = get_term_by('id',$parent_id,$object->taxonomy);
+                            $output .= $sep.'<div class="crumb"><a href="'.get_term_link($parent, $parent->taxonomy).'">'.$parent->name.'</a></div>';
+                        }
+                    }
+                }
                 $output .= $sep.'<div class="crumb last"><a href="'.get_category_link($cat_id).'">'.$object->name.'</a></div>';
             }
             elseif(is_archive()){
@@ -68,9 +91,15 @@
             }
             elseif(is_page() && !is_home() && !is_front_page()){
 				if($object->post_parent){
-			        $parent = get_post($object->post_parent);
-                    $output .= $sep.'<div class="crumb"><a href="'. get_the_permalink($parent->ID).'">'.get_the_title($parent->ID).'</a></div>';
-                    $output .= $sep.'<div class="crumb last"><a href="'. get_the_permalink($object->ID).'">'.get_the_title($object->ID).'</a></div>';
+                    $ancestors = get_ancestors($object->ID, 'page');
+                    if(!empty($ancestors)){
+                        $reversed_ancestors = array_reverse($ancestors,false);
+                        foreach ($reversed_ancestors as $parent_id) {
+                            $parent = get_post($parent_id);
+                            $output .= $sep.'<div class="crumb"><a href="'. get_the_permalink($parent->ID).'">'.get_the_title($parent->ID).'</a></div>';
+                        }
+                        $output .= $sep.'<div class="crumb last"><a href="'. get_the_permalink($object->ID).'">'.get_the_title($object->ID).'</a></div>';
+                    }
                 }
                 else{
 					$output .= $sep.'<div class="crumb last"><a href="'. get_the_permalink($object->ID).'">'.get_the_title($object->ID).'</a></div>';
@@ -92,6 +121,7 @@ add_action( 'wp_enqueue_scripts', 'my_enqueued_assets' );
 function my_enqueued_assets() {
     $plugin_url = plugins_url( '/', __FILE__ );
 	wp_enqueue_style( 'bc-path-style', $plugin_url.'bc-path.css' );
+    wp_enqueue_style('fontawsome', 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css');
     wp_enqueue_style('bc-path-script', $plugin_url . 'bc-path.js',array( 'jquery' ),'1.0.0',true);
 }
 
