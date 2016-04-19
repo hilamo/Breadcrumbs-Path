@@ -39,6 +39,7 @@
 
             if(is_tax() || is_tag()){
                 $tax_id = $object->term_id;
+                $archive_array = get_archive_by_term($object);
                 if($object->parent){
                     $term_parents = get_ancestors($object->term_id, $object->taxonomy);
                     if(!empty($term_parents)){
@@ -49,6 +50,7 @@
                         }
                     }
                 }
+                $output .= $sep.'<div class="crumb last"><a href="'.get_post_type_archive_link($archive_array['name_id'] ).'">'.$archive_array['lable_name'].'</a></div>';
                 $output .= $sep.'<div class="crumb last"><a href="'.get_term_link($object, $object->taxonomy).'">'.$object->name.'</a></div>';
             }
             elseif(is_category()){
@@ -125,7 +127,10 @@ function my_enqueued_assets() {
     wp_enqueue_style('bc-path-script', $plugin_url . 'bc-path.js',array( 'jquery' ),'1.0.0',true);
 }
 
-
+/**
+ * get all registered custom post types
+ * @return Array of post types Objects
+ */
 function get_custom_post_types(){
     $post_types_args = array(
        'public'   => true,
@@ -139,31 +144,23 @@ function get_custom_post_types(){
     return $post_types;
 }
 
-function get_post_type_taxonomies(){
-
+/**
+ * get archive name and label by term object
+ * @param  Oobject term object
+ * @return Array
+ */
+function get_archive_by_term($term){
+    $array = array();
+    if(!is_tax() || empty($term)){
+        return;
+    }
     $post_types = get_custom_post_types();
-    if(!$post_types){
-        return ;
+    if(!empty($post_types)){
+        foreach ($post_types as $ptName => $ptObject) {
+            foreach(get_object_taxonomies($ptName) as $object_tax){
+                $array[$object_tax] = array( 'name_id' => $ptName , 'lable_name' => $ptObject->labels->name );
+            }
+        }
     }
-
-    $post_taxonomies = array();
-    foreach ($post_types as $key => $type) {
-        $post_taxonomies[$key]['taxonomies'] = $type->taxonomies;
-    }
-    return $post_taxonomies;
-}
-
-function get_taxonomy_post_type($term){
-
-    if(!$term){ return;}
-
-    $available_tax = get_post_type_taxonomies();
-    //print_r($available_tax);
-    foreach ($available_tax as $key => $atax) {
-        // print_r($atax['taxonomies']);
-        // //print_r($term);
-        // if(in_array($term->taxonomy, $atax['taxonomies'])){
-        //     echo '123';
-        // }
-    }
+    return($array[$term->taxonomy]);
 }
