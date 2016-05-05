@@ -74,6 +74,11 @@
                    $output .= $sep.'<div class="crumb last"><a href="'.get_post_type_archive_link($post_type).'">'.$name.'</a></div>';
                 }
             }
+            elseif(is_search()){
+                $output .= $sep.'<div class="crumb last"><a href="'. get_the_permalink($object->ID).'">'.__('Search Results','bc_path').'</a></div>';
+            }elseif(is_404()){
+                $output .= $sep.'<div class="crumb last"><a href="'. get_the_permalink($object->ID).'">'.__('Error Page','bc_path').'</a></div>';
+            }
             elseif(is_single()){
                 $post_type = $object->post_type;
                 $post_types = get_custom_post_types();
