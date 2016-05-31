@@ -1,0 +1,63 @@
+/**
+* Breadcrumbs Path
+* Version: 1.0.0
+*/
+
+.breadcrumbs_container{
+    position:relative;
+    display:block;
+    width:100%;
+    padding:15px 0 0 0;
+}
+.breadcrumbs_container{
+    background-color:#eee;
+}
+#breadcrumbs_path{
+    position:relative;
+    display:inline-block;
+    float:left;
+}
+#breadcrumbs_path .crumbs{
+    position:relative;
+    display:block;
+    width:100%;
+}
+#breadcrumbs_path .crumbs .crumb{
+    position:relative;
+    display:inline-block;
+    float:left;
+}
+#breadcrumbs_path .crumbs .crumb a{
+    position:relative;
+    display:block;
+    color:#868686;
+    font-size:13px;
+    line-height:1.5em;
+    text-decoration:none;
+}
+#breadcrumbs_path .crumbs .crumb a:hover{
+    text-decoration:none;
+}
+#breadcrumbs_path .crumbs .crumb_sep{
+    position:relative;
+    display:inline-block;
+    color:#868686;
+    font-size:13px;
+    line-height:1.5em;
+    float:left;
+    margin:0 5px;
+}
+#breadcrumbs_path .crumbs .crumb.last a{
+    color:#ed1d24;
+    text-decoration:none;
+}
+/********************/
+.rtl #breadcrumbs_path{
+    float: right;
+}
+.rtl #breadcrumbs_path .crumbs .crumb{
+    float:right;
+}
+.rtl #breadcrumbs_path .crumbs .crumb_sep{
+    float: right;
+}
